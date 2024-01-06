@@ -1,26 +1,31 @@
 import React, {useState} from 'react'
 
 export const UnsplashImage = () => {
-	const [activeImage, setActiveImage] = useState({})
+	const [activeImageUrl, setActiveImageUrl] = useState('')
+	const [activeImageObject, setActiveImageObject] = useState({})
 	const [imagesList, setImageList] = useState([])
-
-	const getRandomImage = (list) => {
+	
+	const fetchRandomImage = (list) => {
 		let num = Math.floor(Math.random() * 30);
 		let randomImage = list[num]
-		console.log(num)
-		console.log("randomImage", randomImage)
-		setActiveImage(randomImage);
-		console.log("activeImage:", activeImage)
+		setActiveImageObject(randomImage);
+		console.log(randomImage)
+		console.log("activeImageUrl:", activeImageUrl)
+		
+		if (randomImage != null) {
+			let url = randomImage.urls.regular
+			setActiveImageUrl(url)
+			console.log(url)
+		}
 	} 
 
 	const fetchImagesList = async () => {
 		try {
 			const response = await fetch(
-				'https://api.unsplash.com/photos/?query=nature&client_id=pmTNZxpE0TQ6pRwUqnkTL8uWNhzcEWYQzPdzd8NtmPo&per_page=30')
+				'https://api.unsplash.com/photos/?query=nature&client_id=pmTNZxpE0TQ6pRwUqnkTL8uWNhzcEWYQzPdzd8NtmPo&per_page=30&order_by=popular')
 			const data = await response.json()
 
 			setImageList(data)
-			getRandomImage(imagesList)
 		}
 		catch {
 			console.error("Error fetching images from API, Please try again!")
@@ -29,13 +34,14 @@ export const UnsplashImage = () => {
 
 	const handlePlayClick = () => {
 		fetchImagesList();
+		fetchRandomImage(imagesList)
 	}
 
 	return (
 		<div className='ImageSection'>
 			<p>Direction: Try and guess where the picture is taken</p>
 			<button onClick={handlePlayClick}>Play</button>
-			{/* <img src={activeImage.urls.regular} alt='' className='randomImage'/> */}
+			<img src={activeImageUrl} alt='' className='randomImage' />
 		</div>
 	)
 }
