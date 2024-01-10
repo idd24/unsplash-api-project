@@ -2,11 +2,13 @@ import React, {useState, useEffect} from 'react';
 import CityOptionsForm from './CityOptionsForm';
 
 export const UnsplashImage = () => {
-	const [activeImageUrl, setActiveImageUrl] = useState('')
-	const [activeImageObject, setActiveImageObject] = useState({})
-	const [activeImageLocation, setActiveImageLocation] = useState('')
-	const [imagesList, setImageList] = useState([])
-	const [options, setOptions] = useState([])
+	const [gameActive, setGameActive] = useState(false);
+	const [answerBoolean, setAnswerBoolean] = useState(null)
+	const [activeImageUrl, setActiveImageUrl] = useState('');
+	const [activeImageObject, setActiveImageObject] = useState({});
+	const [activeImageLocation, setActiveImageLocation] = useState('');
+	const [imagesList, setImageList] = useState([]);
+	const [options, setOptions] = useState([]);
 	
 	const fetchRandomImage = (list) => {
 		let num = Math.floor(Math.random() * list.length);
@@ -46,10 +48,10 @@ export const UnsplashImage = () => {
 
 	const compileGameOptions = (location) => {
 		let country_list = [
-			"Afghanistan","Albania","Algeria","Andorra","Angola","Anguilla","Antigua &amp; Barbuda",
+			"Afghanistan","Albania","Algeria","Andorra","Angola","Anguilla","Barbuda",
 			"Argentina","Armenia","Aruba","Australia","Austria","Azerbaijan","Bahamas","Bahrain",
 			"Bangladesh","Barbados","Belarus","Belgium","Belize","Benin","Bermuda","Bhutan","Bolivia",
-			"Bosnia &amp; Herzegovina","Botswana","Brazil","British Virgin Islands","Brunei","Bulgaria",
+			"Bosnia","Botswana","Brazil","British Virgin Islands","Brunei","Bulgaria",
 			"Burkina Faso","Burundi","Cambodia","Cameroon","Cape Verde","Cayman Islands","Chad","Chile",
 			"China","Colombia","Congo","Cook Islands","Costa Rica","Cote D Ivoire","Croatia","Cruise Ship",
 			"Cuba","Cyprus","Czech Republic","Denmark","Djibouti","Dominica","Dominican Republic","Ecuador",
@@ -63,11 +65,11 @@ export const UnsplashImage = () => {
 			"Mauritius","Mexico","Moldova","Monaco","Mongolia","Montenegro","Montserrat","Morocco","Mozambique","Namibia",
 			"Nepal","Netherlands","Netherlands Antilles","New Caledonia","New Zealand","Nicaragua","Niger","Nigeria","Norway",
 			"Oman","Pakistan","Palestine","Panama","Papua New Guinea","Paraguay","Peru","Philippines","Poland","Portugal",
-			"Puerto Rico","Qatar","Reunion","Romania","Russia","Rwanda","Saint Pierre &amp; Miquelon","Samoa","San Marino",
+			"Puerto Rico","Qatar","Reunion","Romania","Russia","Rwanda","Saint Pierre","Samoa","San Marino",
 			"Satellite","Saudi Arabia","Senegal","Serbia","Seychelles","Sierra Leone","Singapore","Slovakia","Slovenia",
-			"South Africa","South Korea","Spain","Sri Lanka","St Kitts &amp; Nevis","St Lucia","St Vincent","St. Lucia",
+			"South Africa","South Korea","Spain","Sri Lanka","St Kitts","St Lucia","St Vincent","St. Lucia",
 			"Sudan","Suriname","Swaziland","Sweden","Switzerland","Syria","Taiwan","Tajikistan","Tanzania","Thailand",
-			"Timor L'Este","Togo","Tonga","Trinidad &amp; Tobago","Tunisia","Turkey","Turkmenistan","Turks &amp; Caicos",
+			"Timor L'Este","Togo","Tonga","Trinidad","Tunisia","Turkey","Turkmenistan","Turks & Caicos",
 			"Uganda","Ukraine","United Arab Emirates","United Kingdom","Uruguay","Uzbekistan","Venezuela","Vietnam",
 			"Virgin Islands (US)","Yemen","Zambia","Zimbabwe"
 		];
@@ -77,10 +79,9 @@ export const UnsplashImage = () => {
 			if (!options.includes(country_list[random])) {
 				options.push(country_list[random])
 			}
-			console.log(country_list[random])
 		}
 		// Shuffle options function here before passing to next step
-		console.log(options);
+		shuffleArray(options)
 		setOptions(options)
 	}
 
@@ -92,14 +93,65 @@ export const UnsplashImage = () => {
 
 	const handlePlayClick = () => {
 		fetchImagesList();
+		setGameActive(true);
 	};
+
+	const handleOptions = (value) => {
+		if (value === activeImageLocation) {
+			setAnswerBoolean(true)
+		}
+		else {
+			setAnswerBoolean(false)
+		}
+	}
+
+	const handlePlayAgain = () => {
+		fetchImagesList();
+		setAnswerBoolean(null);
+	}
+
+	const gameStatus = () => {
+		if (answerBoolean === true) {
+			return (
+				<div>
+				  <p>Correct</p>
+				  <button onClick={handlePlayAgain}>Next</button>
+				</div>
+			);
+		}
+		else {
+			return (
+				<div>
+				  <p>Incorrect</p>
+				  <button onClick={handlePlayAgain}>Play again!</button>
+				</div>
+			  );
+		}
+	}
+
+	function shuffleArray(array) {
+		for (var i = array.length - 1; i > 0; i--) {
+			var j = Math.floor(Math.random() * (i + 1));
+			var temp = array[i];
+			array[i] = array[j];
+			array[j] = temp;
+		}
+	}
 
 	return (
 		<div className='ImageSection'>
 			<p>Direction: Try and guess where the picture is taken</p>
-			<button onClick={handlePlayClick}>Play</button>
-			<img src={activeImageUrl} alt='' className='randomImage' />
-			{options.map(option => <CityOptionsForm key={option} country={option} />)}
+			{!gameActive && (<button onClick={handlePlayClick}>Play</button>)}
+			{(answerBoolean != null) ? 
+			gameStatus() : 
+			(<div className="game-section">
+				<div className="image">
+					<img src={activeImageUrl} alt='' className='randomImage' />
+				</div>
+				<div className="choices">
+					{options.map(option => <CityOptionsForm key={option} country={option} handleOptions={handleOptions}/>)}
+				</div>
+			</div>)}
 		</div>
 	);
 }

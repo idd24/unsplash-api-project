@@ -1,8 +1,10 @@
 import React from 'react'
 
-const CityOptionsForm = (props) => {
+const CityOptionsForm = ({country, handleOptions}) => {
   return (
-    <button value={props.country}>{props.country}</button>
+    <button value={country} onClick={() => {
+        handleOptions(country)
+    }}>{country}</button>
   )
 }
 
