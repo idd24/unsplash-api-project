@@ -27,7 +27,7 @@ export const UnsplashImage = () => {
 		try {
 			const response = await fetch('https://api.unsplash.com//photos/random?query=nature&count=30', {
 				headers: {
-					'Authorization': 'Client-ID pmTNZxpE0TQ6pRwUqnkTL8uWNhzcEWYQzPdzd8NtmPo'
+					'Authorization': `Client-ID ${process.env.REACT_APP_API_KEY}`
 				}
 			});
 			const data = await response.json();
@@ -114,16 +114,16 @@ export const UnsplashImage = () => {
 		if (answerBoolean === true) {
 			return (
 				<div>
-				  <p>Correct</p>
-				  <button onClick={handlePlayAgain}>Next</button>
+				  <p className='correct'>Correct</p>
+				  <button className='btn btn-secondary' onClick={handlePlayAgain}>Next</button>
 				</div>
 			);
 		}
 		else {
 			return (
 				<div>
-				  <p>Incorrect</p>
-				  <button onClick={handlePlayAgain}>Play again!</button>
+				  <p className='incorrect'>Incorrect - That was {activeImageLocation}!</p>
+				  <button className='btn btn-secondary' onClick={handlePlayAgain}>Play again!</button>
 				</div>
 			  );
 		}
@@ -140,13 +140,12 @@ export const UnsplashImage = () => {
 
 	return (
 		<div className='ImageSection'>
-			<p>Direction: Try and guess where the picture is taken</p>
-			{!gameActive && (<button onClick={handlePlayClick}>Play</button>)}
+			{!gameActive && (<button className='btn btn-primary' onClick={handlePlayClick}>Play</button>)}
 			{(answerBoolean != null) ? 
 			gameStatus() : 
 			(<div className="game-section">
 				<div className="image">
-					<img src={activeImageUrl} alt='' className='randomImage' />
+					{activeImageUrl && <img src={activeImageUrl} className='randomImage' alt="Random Image" />}
 				</div>
 				<div className="choices">
 					{options.map(option => <CityOptionsForm key={option} country={option} handleOptions={handleOptions}/>)}

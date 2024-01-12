@@ -1,0 +1,21 @@
+.title {
+    color: #DDE6ED;
+}
+
+.info {
+    color: #9DB2BF;
+}
+
+.correct {
+    color: #A6CF98
+}
+
+.incorrect {
+    color: #FA7070;
+}
+
+.randomImage {
+    width: 480px;
+    border-radius: 10px;
+    aspect-ratio: 1 / 1;
+}
